@@ -1,17 +1,16 @@
-import {ApplicationRef, DoBootstrap, Injector, NgModule} from '@angular/core';
+import {ApplicationRef, DoBootstrap, Injector, ModuleWithProviders, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
-import {createCustomElement, NgElementConstructor} from "@angular/elements";
-import {Router} from "@angular/router";
-import {selectorComponentMap} from "./custom1-module/customComponentMappings";
-import {TranslateModule} from "@ngx-translate/core";
-import { CommonModule } from '@angular/common';
-import { AutoAssetSrcDirective } from './services/auto-asset-src.directive';
-import {SHELL_ROUTER} from "./injection-tokens";
+import {createCustomElement, NgElementConstructor} from '@angular/elements';
+import {Router} from '@angular/router';
+import {selectorComponentMap} from './custom1-module/customComponentMappings';
+import {TranslateModule} from '@ngx-translate/core';
+import {CommonModule} from '@angular/common';
+import {AutoAssetSrcDirective} from './services/auto-asset-src.directive';
+import {LibmapsService} from './libmaps/libmaps.service';
+import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 
-
-
-export const AppModule = ({providers, shellRouter}: {providers:any, shellRouter: Router}) => {
+export const AppModule = ({providers}: {providers:any}) => {
    @NgModule({
     declarations: [
       AppComponent,
@@ -23,7 +22,11 @@ export const AppModule = ({providers, shellRouter}: {providers:any, shellRouter:
       CommonModule,
       TranslateModule.forRoot({})
     ],
-    providers: [...providers, {provide: SHELL_ROUTER, useValue: shellRouter}],
+    providers: [
+      LibmapsService,
+      provideHttpClient(withInterceptorsFromDi()),
+      ...providers,
+    ],
     bootstrap: []
   })
   class AppModule implements DoBootstrap{
