@@ -14,10 +14,15 @@
 // http://localhost:4201/nde/search?query=harry%20potter&tab=LibraryCatalog&search_scope=MyInstitution&searchInFulltext=false&facet=tlevel,include,available_p&vid=01TUL_INST:NDE&lang=en
 // https://library.search.tulane.edu/nde/search?query=harry%20potter&tab=LibraryCatalog&search_scope=MyInstitution&searchInFulltext=false&facet=tlevel,include,available_p&offset=20&vid=01TUL_INST:NDE&lang=en
 
+// boston college
+// http://localhost:4201/nde/fulldisplay?context=L&vid=01BC_INST:scot_nde&search_scope=MyInst_and_CI&lang=en&docid=alma99118022050001021
+// https://bc.primo.exlibrisgroup.com/nde/fulldisplay?context=L&vid=01BC_INST:scot_nde&search_scope=MyInst_and_CI&lang=en&docid=alma99118022050001021
+
 const environments = {
     'demo': 'https://exldev-test1.primo.exlibrisgroup.com',
     'bond': 'https://librarysearch.bond.edu.au',
     'tulane': 'https://library.search.tulane.edu',
+    'boston': 'https://bc.primo.exlibrisgroup.com',
 }
 
-export const PROXY_TARGET = environments['tulane'];
+export const PROXY_TARGET = environments['boston'];

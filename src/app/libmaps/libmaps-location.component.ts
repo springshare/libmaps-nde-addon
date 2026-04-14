@@ -2,10 +2,10 @@ import {Component} from '@angular/core';
 import {LibmapsBaseComponent} from './libmaps-base.component';
 
 @Component({
-    selector: 'libmaps',
+    selector: 'libmaps-location',
     standalone: true,
     imports: [],
     templateUrl: './libmaps.component.html',
-    styleUrl: './libmaps.component.scss'
+    styleUrl: './libmaps-location.component.scss'
 })
-export class LibmapsComponent extends LibmapsBaseComponent {}
+export class LibmapsLocationComponent extends LibmapsBaseComponent {}
