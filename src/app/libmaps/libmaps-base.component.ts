@@ -10,48 +10,51 @@ import {LibmapsModalComponent} from '../libmaps-modal/libmaps-modal.component';
 export abstract class LibmapsBaseComponent {
     @Input() protected hostComponent!: any;
 
+    private configuration: Configuration|null;
     public buttonConfiguration: ButtonConfiguration;
-    public mapItQueryString: string;
-    public callNumber: string;
-    public bookTitle: string;
 
     protected libMapsService = inject(LibmapsService);
     protected dialog = inject(MatDialog);
 
     constructor() {
+        this.configuration = null;
         this.buttonConfiguration = new ButtonConfiguration('', '', '', '', '', 0, false);
-        this.mapItQueryString = '';
-        this.callNumber = '';
-        this.bookTitle = '';
     }
 
-    async ngOnInit() {
-        const bestLocation = this.hostComponent?.delivery?.bestlocation || this.hostComponent?.location;
-        if (!bestLocation) {
-            return;
-        }
-
-        const availabilityStatus = bestLocation.availabilityStatus;
-        if (availabilityStatus !== 'available') {
-            return;
-        }
-
-        const bookTitles = this.hostComponent?.searchResult?.pnx?.display?.title || [];
-        const bookTitle = bookTitles.length > 0 ? bookTitles[0] : '-';
-
+    ngOnInit() {
         this.libMapsService.getConfigurationData()
             .subscribe(configuration => {
+                this.configuration = configuration;
                 this.buttonConfiguration = configuration.button;
-                this.callNumber = bestLocation.callNumber;
-                this.bookTitle = bookTitle;
-                this.mapItQueryString = this.createMapItQueryString(
-                    configuration,
-                    bestLocation.callNumber,
-                    bestLocation.mainLocation,
-                    bestLocation.subLocation,
-                    this.bookTitle
-                );
             });
+    }
+
+    public get bookTitle(): string {
+        const titles = this.hostComponent?.searchResult?.pnx?.display?.title || [];
+        return titles.length > 0 ? titles[0] : '-';
+    }
+
+    public get callNumber(): string {
+        const bestLocation = this.hostComponent?.delivery?.bestlocation || this.hostComponent?.location;
+        return bestLocation?.callNumber || '';
+    }
+
+    public get mapItQueryString(): string {
+        // if we don't have the configuration yet - bail and this will be called again when we do
+        if (!this.configuration) return '';
+
+        // if we have a location and the book is available
+        const bestLocation = this.hostComponent?.delivery?.bestlocation || this.hostComponent?.location;
+        if (!bestLocation || bestLocation.availabilityStatus !== 'available') return '';
+
+        // evaluate if the call-number / location / collection should show a map-it button
+        return this.createMapItQueryString(
+            this.configuration,
+            bestLocation.callNumber,
+            bestLocation.mainLocation,
+            bestLocation.subLocation,
+            this.bookTitle
+        );
     }
 
     public showModal() {
