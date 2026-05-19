@@ -29,7 +29,7 @@ export class LibmapsService {
                 map((config: ConfigurationData) => {
                     return new Configuration(
                         this.createMap(config.locationNames),
-                        this.createMap(config.collectionNames),
+                        config.collectionNameMapByLocation,
                         new ButtonConfiguration(
                             config.text,
                             config.textColor,

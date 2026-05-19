@@ -1,7 +1,7 @@
 // this is the data format we get from libmaps server
 export interface ConfigurationData {
     locationNames: string[];
-    collectionNames: string[];
+    collectionNameMapByLocation: Record<string, Record<string, boolean>>;
     text: string;
     textColor: string;
     backgroundColor: string;

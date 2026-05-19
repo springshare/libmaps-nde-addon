@@ -97,11 +97,12 @@ export abstract class LibmapsBaseComponent {
             return '';
         }
 
-        if (!configuration.validLocationNameMap.has(locationName.toLowerCase())) {
+        if (!configuration.locationNameMap.has(locationName.toLowerCase())) {
             return '';
         }
 
-        if (!configuration.validCollectionNameMap.has(collectionName.toLowerCase())) {
+        const collectionNameMap = configuration.collectionNameMapByLocation[locationName.toLowerCase()];
+        if (!collectionNameMap?.[collectionName.toLowerCase()]) {
             return '';
         }
 
