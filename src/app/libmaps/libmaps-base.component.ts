@@ -1,4 +1,4 @@
-import {Directive, Input, inject} from '@angular/core';
+import {Directive, inject, Input} from '@angular/core';
 import {HttpParams} from '@angular/common/http';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {LibmapsService} from './libmaps.service';
@@ -10,7 +10,7 @@ import {LibmapsModalComponent} from '../libmaps-modal/libmaps-modal.component';
 export abstract class LibmapsBaseComponent {
     @Input() protected hostComponent!: any;
 
-    private configuration: Configuration|null;
+    private configuration: Configuration | null;
     public buttonConfiguration: ButtonConfiguration;
 
     protected libMapsService = inject(LibmapsService);
@@ -20,6 +20,8 @@ export abstract class LibmapsBaseComponent {
         this.configuration = null;
         this.buttonConfiguration = new ButtonConfiguration('', '', '', '', '', 0, false);
     }
+
+    protected abstract get allowedStatuses(): Set<string>;
 
     ngOnInit() {
         this.libMapsService.getConfigurationData()
@@ -31,21 +33,31 @@ export abstract class LibmapsBaseComponent {
 
     public get bookTitle(): string {
         const titles = this.hostComponent?.searchResult?.pnx?.display?.title || [];
+
         return titles.length > 0 ? titles[0] : '-';
     }
 
     public get callNumber(): string {
         const bestLocation = this.hostComponent?.delivery?.bestlocation || this.hostComponent?.location;
+
         return bestLocation?.callNumber || '';
     }
 
     public get mapItQueryString(): string {
         // if we don't have the configuration yet - bail and this will be called again when we do
-        if (!this.configuration) return '';
+        if (!this.configuration) {
+            return '';
+        }
 
         // if we have a location and the book is available
         const bestLocation = this.hostComponent?.delivery?.bestlocation || this.hostComponent?.location;
-        if (!bestLocation || bestLocation.availabilityStatus !== 'available') return '';
+        if (!bestLocation) {
+            return '';
+        }
+
+        if (!this.allowedStatuses.has(bestLocation.availabilityStatus)) {
+            return '';
+        }
 
         // evaluate if the call-number / location / collection should show a map-it button
         return this.createMapItQueryString(

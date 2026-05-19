@@ -8,4 +8,8 @@ import {LibmapsBaseComponent} from './libmaps-base.component';
     templateUrl: './libmaps.component.html',
     styleUrl: './libmaps.component.scss'
 })
-export class LibmapsComponent extends LibmapsBaseComponent {}
+export class LibmapsComponent extends LibmapsBaseComponent {
+    protected override get allowedStatuses(): Set<string> {
+        return new Set(['available']);
+    }
+}
